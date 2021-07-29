@@ -105,6 +105,18 @@ class Comment:
 
 
 @dataclass
+class PullRequestCommits:
+    commits: List
+
+    def as_json(self) -> Dict:
+        return [
+            {
+                'sha': 'deadbeefcafe',
+            },
+        ]
+
+
+@dataclass
 class PullRequest:
     repo: Repo
     number: int
@@ -360,6 +372,17 @@ class FakeGitHub(faker.Faker):
         if "labels" in patch:
             pr.set_labels(patch["labels"])
         return pr.as_json()
+
+    # Commmits
+    @faker.route(r"/repos/(?P<owner>[^/]+)/(?P<repo>[^/]+)/pulls/(?P<number>\d+)/commits(\?.*)?")
+    def _patch_pr_commits(self, match, request, _context) -> Dict:
+        commits = PullRequestCommits(self)
+        data = commits.as_json()
+        return data
+
+    @faker.route(r"/repos/(?P<owner>[^/]+)/(?P<repo>[^/]+)/statuses/(?P<sha>[a-fA-F0-9]+)(\?.*)?", 'POST')
+    def _patch_pr_status_update(self, match, request, _context) -> Dict:
+        return {}
 
     # Repo labels
 
