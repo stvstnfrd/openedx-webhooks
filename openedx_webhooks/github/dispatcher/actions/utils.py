@@ -31,7 +31,7 @@ def _get_latest_commit_for_pull_request(repo_name_full: str, number: int) -> str
     if data:
         commit = data[-1]
     sha = commit.get('sha')
-    logger.debug(f"CLA: SHA %s", sha, repo_name_full)
+    logger.debug("CLA: SHA %s", sha, repo_name_full)
     return sha
 
 
@@ -40,20 +40,20 @@ def _get_latest_commit_for_pull_request_data(repo_name_full: str, number: int) -
     Lookup the HEAD commit SHA for a pull request
     """
     url = f"https://api.github.com/repos/{repo_name_full}/pulls/{number}/commits"
-    logger.debug(f"CLA: GET %s", url)
+    logger.debug("CLA: GET %s", url)
     response = get_github_session().get(url)
     log_check_response(response)
     data = response.json()
-    logger.debug(f"CLA: GOT %s", data)
+    logger.debug("CLA: GOT %s", data)
     return data
 
 
 def _update_commit_status_for_cla(url, payload):
-    logger.debug(f"CLA: POST %s %s", url, payload)
+    logger.debug("CLA: POST %s %s", url, payload)
     response = get_github_session().post(url, json=payload)
     log_check_response(response)
     data = response.json()
-    logger.debug(f"CLA: PAST %s %s", url, data)
+    logger.debug("CLA: PAST %s %s", url, data)
     return data
 
 
