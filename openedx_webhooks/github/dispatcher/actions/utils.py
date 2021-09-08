@@ -34,7 +34,7 @@ def _get_latest_commit_for_pull_request(repo_name_full: str, number: int) -> str
     if data:
         commit = data[-1]
     sha = commit.get('sha')
-    logger.debug("CLA: SHA %s", sha, repo_name_full)
+    logger.info("CLA: SHA %s", sha)
     return sha
 
 
@@ -43,11 +43,11 @@ def _get_latest_commit_for_pull_request_data(repo_name_full: str, number: int) -
     Lookup the HEAD commit SHA for a pull request
     """
     url = f"https://api.github.com/repos/{repo_name_full}/pulls/{number}/commits"
-    logger.debug("CLA: GET %s", url)
+    logger.info("CLA: GET %s", url)
     response = get_github_session().get(url)
     log_check_response(response)
     data = response.json()
-    logger.debug("CLA: GOT %s", data)
+    logger.info("CLA: GOT %s", data)
     return data
 
 
@@ -55,11 +55,11 @@ def _get_commit_status_for_cla(url):
     """
     Send a GET request to the Github API to lookup the build status
     """
-    logger.debug("CLA: GET %s", url)
+    logger.info("CLA: GET %s", url)
     response = get_github_session().get(url)
     log_check_response(response)
     data = response.json()
-    logger.debug("CLA: GOT %s %s", url, data)
+    logger.info("CLA: GOT %s %s", url, data)
     cla_status = [
         status
         for status in data
@@ -75,11 +75,11 @@ def _update_commit_status_for_cla(url, payload):
     """
     Send a POST request to the Github API to update the build status
     """
-    logger.debug("CLA: POST %s %s", url, payload)
+    logger.info("CLA: POST %s %s", url, payload)
     response = get_github_session().post(url, json=payload)
     log_check_response(response)
     data = response.json()
-    logger.debug("CLA: PAST %s %s", url, data)
+    logger.info("CLA: PAST %s %s", url, data)
     return data
 
 
