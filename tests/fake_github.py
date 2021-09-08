@@ -296,6 +296,7 @@ class FakeGitHub(faker.Faker):
         self.login = login
         self.users: Dict[str, User] = {}
         self.repos: Dict[str, Repo] = {}
+        self.has_signed_cla = True
 
     def make_user(self, login: str, **kwargs) -> User:
         u = self.users[login] = User(login, **kwargs)
@@ -382,14 +383,22 @@ class FakeGitHub(faker.Faker):
 
     @faker.route(r"/repos/(?P<owner>[^/]+)/(?P<repo>[^/]+)/statuses/(?P<sha>[a-fA-F0-9]+)(\?.*)?")
     def _patch_pr_status_check(self, match, request, _context) -> Dict:
+        if self.has_signed_cla is None:
+            return None
+        if self.has_signed_cla:
+            state = 'passing'
+        elif self.has_signed_cla == False:
+            state = 'failing'
         return [
             {
-                'state': 'passing',
+                'state': state,
             },
         ]
 
     @faker.route(r"/repos/(?P<owner>[^/]+)/(?P<repo>[^/]+)/statuses/(?P<sha>[a-fA-F0-9]+)(\?.*)?", 'POST')
     def _patch_pr_status_update(self, match, request, _context) -> Dict:
+        logger.info("%s %s", request, dir(_context))
+        self.has_signed_cla = True
         return {}
 
     # Repo labels
