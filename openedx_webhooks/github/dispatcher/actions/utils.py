@@ -26,6 +26,9 @@ def find_issues_for_pull_request(jira, pull_request_url):
 
 
 def _get_latest_commit_for_pull_request(repo_name_full: str, number: int) -> str:
+    """
+    Lookup PR commit details and pull out the SHA of the most recent commit
+    """
     data = _get_latest_commit_for_pull_request_data(repo_name_full, number)
     commit = {}
     if data:
@@ -49,6 +52,9 @@ def _get_latest_commit_for_pull_request_data(repo_name_full: str, number: int) -
 
 
 def _update_commit_status_for_cla(url, payload):
+    """
+    Send a POST request to the Github API to update the build status
+    """
     logger.debug("CLA: POST %s %s", url, payload)
     response = get_github_session().post(url, json=payload)
     log_check_response(response)
