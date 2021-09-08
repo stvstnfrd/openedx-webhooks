@@ -197,6 +197,7 @@ def test_rescan_blended(reqctx, fake_github, fake_jira):
     assert "changed" not in ret
 
     # We shouldn't have made any writes to GitHub or Jira.
+    fake_github.assert_readonly()
     fake_jira.assert_readonly()
 
 

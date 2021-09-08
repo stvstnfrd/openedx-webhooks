@@ -51,6 +51,26 @@ def _get_latest_commit_for_pull_request_data(repo_name_full: str, number: int) -
     return data
 
 
+def _get_commit_status_for_cla(url):
+    """
+    Send a GET request to the Github API to lookup the build status
+    """
+    logger.debug("CLA: GET %s", url)
+    response = get_github_session().get(url)
+    log_check_response(response)
+    data = response.json()
+    logger.debug("CLA: GOT %s %s", url, data)
+    cla_status = [
+        status
+        for status in data
+        if status.get('context') == 'cla'
+    ]
+    state = None
+    if len(cla_status) > 0:
+        state = cla_status[-1].get('state')
+    return state
+
+
 def _update_commit_status_for_cla(url, payload):
     """
     Send a POST request to the Github API to update the build status
@@ -77,15 +97,19 @@ def update_commit_status_for_cla(pull_request: PrDict) -> Optional[bool]:
     if has_signed_agreement:
         status = 'success'
     url = f"https://api.github.com/repos/{repo_name_full}/statuses/{sha}"
-    payload = {
-        'context': 'cla',
-        'description': 'We need a signed CLA',
-        'state': status,
-        'target_url': 'https://openedx.atlassian.net/wiki/spaces/COMM/pages/941457737/How+to+start+contributing+to+the+Open+edX+code+base',
-    }
-    data = _update_commit_status_for_cla(url, payload)
-    if data is None:
-        return None
+    state = _get_commit_status_for_cla(url)
+    if state != status:
+        payload = {
+            'context': 'cla',
+            'description': 'We need a signed CLA',
+            'state': status,
+            # pylint: disable=line-too-long
+            'target_url': 'https://openedx.atlassian.net/wiki/spaces/COMM/pages/941457737/How+to+start+contributing+to+the+Open+edX+code+base',
+            # pylint: enable=line-too-long
+        }
+        data = _update_commit_status_for_cla(url, payload)
+        if data is None:
+            return None
     if status == 'success':
         return True
     return False

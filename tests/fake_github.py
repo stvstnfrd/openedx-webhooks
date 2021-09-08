@@ -380,6 +380,14 @@ class FakeGitHub(faker.Faker):
         data = commits.as_json()
         return data
 
+    @faker.route(r"/repos/(?P<owner>[^/]+)/(?P<repo>[^/]+)/statuses/(?P<sha>[a-fA-F0-9]+)(\?.*)?")
+    def _patch_pr_status_check(self, match, request, _context) -> Dict:
+        return [
+            {
+                'state': 'passing',
+            },
+        ]
+
     @faker.route(r"/repos/(?P<owner>[^/]+)/(?P<repo>[^/]+)/statuses/(?P<sha>[a-fA-F0-9]+)(\?.*)?", 'POST')
     def _patch_pr_status_update(self, match, request, _context) -> Dict:
         return {}
