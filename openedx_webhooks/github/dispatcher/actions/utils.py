@@ -99,6 +99,7 @@ def update_commit_status_for_cla(pull_request: PrDict) -> Optional[bool]:
     url = f"https://api.github.com/repos/{repo_name_full}/statuses/{sha}"
     state = _get_commit_status_for_cla(url)
     if state != status:
+        logger.info("STATE OF US: %s %s", state, status)
         payload = {
             'context': 'cla',
             'description': 'We need a signed CLA',
