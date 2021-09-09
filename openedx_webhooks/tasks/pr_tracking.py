@@ -778,6 +778,6 @@ class FixingActions:
         log_check_response(resp)
 
     def update_commit_status_for_cla(self, *, pull_request: PrDict) -> None:
-        result = update_commit_status_for_cla(pull_request)
-        if result:
+        has_changed, _has_signed = update_commit_status_for_cla(pull_request)
+        if has_changed:
             self.happened = True

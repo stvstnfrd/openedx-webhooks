@@ -110,8 +110,9 @@ class TestCla:
         """
         Check that we can mark the build as pasing with a CLA
         """
-        status = update_commit_status_for_cla(PULL_REQUEST)
-        assert status
+        has_changed, has_signed = update_commit_status_for_cla(PULL_REQUEST)
+        assert has_changed
+        assert has_signed
 
     def test_cla_missing(
             self,
@@ -122,8 +123,9 @@ class TestCla:
         """
         Check that we can mark the build as failing without a CLA
         """
-        status = update_commit_status_for_cla(PULL_REQUEST)
-        assert status is False
+        has_changed, has_signed = update_commit_status_for_cla(PULL_REQUEST)
+        assert has_changed
+        assert not has_signed
 
     def test_get_commit_failure(
             self,
@@ -134,8 +136,9 @@ class TestCla:
         """
         Check that we can handle a failed commit lookup
         """
-        status = update_commit_status_for_cla(PULL_REQUEST)
-        assert status is None
+        has_changed, has_signed = update_commit_status_for_cla(PULL_REQUEST)
+        assert not has_changed
+        assert not has_signed
 
     def test_update_status_failure(
             self,
@@ -146,5 +149,6 @@ class TestCla:
         """
         Check that we can handle a failed status update
         """
-        status = update_commit_status_for_cla(PULL_REQUEST)
-        assert status is None
+        has_changed, has_signed = update_commit_status_for_cla(PULL_REQUEST)
+        assert not has_changed
+        assert not has_signed

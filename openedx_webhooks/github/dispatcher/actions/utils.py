@@ -94,7 +94,7 @@ def update_commit_status_for_cla(pull_request: PrDict) -> bool:
     number = pull_request['number']
     sha = _get_latest_commit_for_pull_request(repo_name_full, number)
     if not sha:
-        return False
+        return (False, None)
     has_signed_agreement = pull_request_has_cla(pull_request)
     status = 'failure'
     if has_signed_agreement:
@@ -113,5 +113,5 @@ def update_commit_status_for_cla(pull_request: PrDict) -> bool:
         }
         data = _update_commit_status_for_cla(url, payload)
         if data is not None:
-            return True
-    return False
+            return (True, has_signed_agreement)
+    return (False, bool(state == 'success'))
