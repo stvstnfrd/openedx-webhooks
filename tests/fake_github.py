@@ -297,6 +297,7 @@ class FakeGitHub(faker.Faker):
         self.users: Dict[str, User] = {}
         self.repos: Dict[str, Repo] = {}
         self.has_signed_cla = True
+        self.cla_statuses: Dict[str, str] = {}
 
     def make_user(self, login: str, **kwargs) -> User:
         u = self.users[login] = User(login, **kwargs)
@@ -383,23 +384,23 @@ class FakeGitHub(faker.Faker):
 
     @faker.route(r"/repos/(?P<owner>[^/]+)/(?P<repo>[^/]+)/statuses/(?P<sha>[a-fA-F0-9]+)(\?.*)?")
     def _patch_pr_status_check(self, match, request, _context) -> Dict:
-        if self.has_signed_cla is None:
-            return None
-        if self.has_signed_cla:
-            state = 'passing'
-        elif self.has_signed_cla == False:
-            state = 'failing'
         return [
             {
-                'state': state,
+                'context': 'cla',
+                'state': self.cla_statuses.get(match['sha']),
             },
         ]
 
     @faker.route(r"/repos/(?P<owner>[^/]+)/(?P<repo>[^/]+)/statuses/(?P<sha>[a-fA-F0-9]+)(\?.*)?", 'POST')
     def _patch_pr_status_update(self, match, request, _context) -> Dict:
         logger.info("%s %s", request, dir(_context))
-        self.has_signed_cla = True
-        return {}
+        self.cla_statuses[match['sha']] = request.json()['state']
+        return [
+            {
+                'context': 'cla',
+                'state': self.cla_statuses.get(match['sha']),
+            },
+        ]
 
     # Repo labels
 
