@@ -1,7 +1,7 @@
 """
 Utilities for GitHub webhook handler actions.
 """
-from typing import Optional
+from typing import Tuple
 
 from openedx_webhooks.info import pull_request_has_cla
 from openedx_webhooks.oauth import get_github_session
@@ -86,7 +86,7 @@ def _update_commit_status_for_cla(url, payload):
     return data
 
 
-def update_commit_status_for_cla(pull_request: PrDict) -> bool:
+def update_commit_status_for_cla(pull_request: PrDict) -> Tuple[bool, bool]:
     """
     Set the CLA build status (success or failure)
     """
