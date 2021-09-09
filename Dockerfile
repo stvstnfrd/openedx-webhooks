@@ -46,5 +46,4 @@ COPY requirements ./requirements
 RUN make install-dev-requirements
 
 COPY . /edx/app/openedx-webhooks
-# CMD ["make", "test"]
-CMD ["py.test", "-rxefs", "--cov=openedx_webhooks", "--cov=tests", "--cov-report=", "--cov-context=test", "openedx_webhooks/github/dispatcher/actions/test/test_github_cla.py", "-k", "TestCla"]
+CMD ["make", "test"]
