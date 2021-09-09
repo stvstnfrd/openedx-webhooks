@@ -15,6 +15,7 @@ from urllib.parse import unquote
 
 from . import faker
 from .helpers import check_good_markdown
+from openedx_webhooks.github.dispatcher.actions.utils import CLA_CONTEXT
 
 
 class FakeGitHubException(faker.FakerException):
@@ -386,7 +387,7 @@ class FakeGitHub(faker.Faker):
     def _patch_pr_status_check(self, match, request, _context) -> Dict:
         return [
             {
-                'context': 'cla',
+                'context': CLA_CONTEXT,
                 'state': self.cla_statuses.get(match['sha']),
             },
         ]
@@ -396,7 +397,7 @@ class FakeGitHub(faker.Faker):
         self.cla_statuses[match['sha']] = request.json()['state']
         return [
             {
-                'context': 'cla',
+                'context': CLA_CONTEXT,
                 'state': self.cla_statuses.get(match['sha']),
             },
         ]

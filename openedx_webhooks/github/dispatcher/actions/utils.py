@@ -10,6 +10,9 @@ from openedx_webhooks.types import PrDict
 from openedx_webhooks.utils import log_check_response
 
 
+CLA_CONTEXT = 'edx/cla'
+
+
 def find_issues_for_pull_request(jira, pull_request_url):
     """
     Find corresponding JIRA issues for a given GitHub pull request.
@@ -63,7 +66,7 @@ def _get_commit_status_for_cla(url):
     cla_status = [
         status
         for status in data
-        if status.get('context') == 'cla'
+        if status.get('context') == CLA_CONTEXT
     ]
     state = None
     if len(cla_status) > 0:
@@ -101,7 +104,7 @@ def update_commit_status_for_cla(pull_request: PrDict) -> Optional[bool]:
     if state != status:
         logger.info("STATE OF US: %s %s", state, status)
         payload = {
-            'context': 'cla',
+            'context': CLA_CONTEXT,
             'description': 'We need a signed CLA',
             'state': status,
             # pylint: disable=line-too-long
