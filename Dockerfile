@@ -10,8 +10,6 @@ RUN apt-get install -qy \
 	python3.8-dev \
 	libssl-dev
 RUN pip3 install --upgrade pip setuptools
-# delete apt package lists because we do not need them inflating our image
-# RUN rm -rf /var/lib/apt/lists/*
 
 # Python is Python3.
 RUN ln -s /usr/bin/python3 /usr/bin/python
