@@ -41,28 +41,6 @@ def patch_get_commit_fail(mocker):
     ), return_value=None)
 
 
-@pytest.fixture
-def patch_get_status_true(mocker):
-    """
-    Force Github API lookup of commit status to be True
-    """
-    mocker.patch((
-        'openedx_webhooks.github.dispatcher.actions.utils'
-        '._get_commit_status_for_cla'
-    ), return_value=True)
-
-
-@pytest.fixture
-def patch_get_status_false(mocker):
-    """
-    Force Github API lookup of commit status to be False
-    """
-    mocker.patch((
-        'openedx_webhooks.github.dispatcher.actions.utils'
-        '._get_commit_status_for_cla'
-    ), return_value=False)
-
-
 @pytest.fixture(autouse=True)
 def patch_get_status_fail(mocker):
     """
