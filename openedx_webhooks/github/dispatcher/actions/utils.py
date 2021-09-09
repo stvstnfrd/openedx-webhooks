@@ -86,7 +86,7 @@ def _update_commit_status_for_cla(url, payload):
     return data
 
 
-def update_commit_status_for_cla(pull_request: PrDict) -> Optional[bool]:
+def update_commit_status_for_cla(pull_request: PrDict) -> bool:
     """
     Set the CLA build status (success or failure)
     """
@@ -94,7 +94,7 @@ def update_commit_status_for_cla(pull_request: PrDict) -> Optional[bool]:
     number = pull_request['number']
     sha = _get_latest_commit_for_pull_request(repo_name_full, number)
     if not sha:
-        return None
+        return False
     has_signed_agreement = pull_request_has_cla(pull_request)
     status = 'failure'
     if has_signed_agreement:
@@ -112,8 +112,6 @@ def update_commit_status_for_cla(pull_request: PrDict) -> Optional[bool]:
             # pylint: enable=line-too-long
         }
         data = _update_commit_status_for_cla(url, payload)
-        if data is None:
-            return None
-    if status == 'success':
-        return True
+        if data is not None:
+            return True
     return False

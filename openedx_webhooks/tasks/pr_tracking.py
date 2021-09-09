@@ -779,5 +779,5 @@ class FixingActions:
 
     def update_commit_status_for_cla(self, *, pull_request: PrDict) -> None:
         result = update_commit_status_for_cla(pull_request)
-        if result is not None:
+        if result:
             self.happened = True
