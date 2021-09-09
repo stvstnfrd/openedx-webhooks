@@ -393,7 +393,6 @@ class FakeGitHub(faker.Faker):
 
     @faker.route(r"/repos/(?P<owner>[^/]+)/(?P<repo>[^/]+)/statuses/(?P<sha>[a-fA-F0-9]+)(\?.*)?", 'POST')
     def _patch_pr_status_update(self, match, request, _context) -> Dict:
-        logger.info("%s %s", request, dir(_context))
         self.cla_statuses[match['sha']] = request.json()['state']
         return [
             {
